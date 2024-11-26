@@ -3,8 +3,6 @@ from .models import Product
 from django import forms
 
 
-
-
 class ProductForm(ModelForm):
     class Meta:
         model = Product
@@ -33,3 +31,16 @@ class ProductForm(ModelForm):
             })
 
         }
+
+
+class ProductUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ["product_name", "product_price",
+                  "product_image", "product_slug"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field in self.fields:
+            self.fields[field].widget.attrs["class"] = "form-control"

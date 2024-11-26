@@ -1,6 +1,7 @@
 <div class="items-center bg-gray-50 rounded-lg shadow sm:flex dark:bg-gray-800 dark:border-gray-700">
-  {% if not my_product.image %}
-    <a href="{{ my_product.get_absolute_url }}"><img class="w-full rounded-lg sm:rounded-none sm:rounded-l-lg" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/avatars/bonnie-green.png" alt="Bonnie Avatar" /></a>
+  {% if  my_product.product_image %}
+    <a href="{{ my_product.get_absolute_url }}">
+      <img class="w-full rounded-lg sm:rounded-none sm:rounded-l-lg" src="{{ my_product.product_image.url}}" alt="{{my_product.product_name}}" /></a>
   {% endif %}
 
   <div class="p-5">

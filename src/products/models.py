@@ -13,6 +13,8 @@ class Product(models.Model):
     product_price = models.DecimalField(
         max_digits=10, decimal_places=2, default=9.99)
 
+    product_image = models.ImageField(
+        upload_to="products/", blank=True, null=True)
     og_price = models.DecimalField(
         max_digits=10, decimal_places=2, default=9.99)
 

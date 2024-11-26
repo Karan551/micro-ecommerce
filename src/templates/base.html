@@ -9,22 +9,27 @@
         Micro eCommerce
       {% endblock %}
     </title>
- 
-    
+
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{% static 'css/output.css' %}" />
   </head>
   <body>
-    {% include "base/navbar.html" %}
+    {% include 'base/navbar.html' %}
 
     <main class="container mx-auto mt-4 min-h-screen">
       {% block content %}
+
       {% endblock %}
     </main>
 
     {% include 'base/footer.html' %}
 
-
-
     <script src="{% static 'js/main.js' %}"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        content: ["./src/**/*.{html,js}", "./src/**/forms.py"],
+      }
+    </script>
   </body>
 </html>

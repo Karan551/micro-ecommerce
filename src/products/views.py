@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-from .forms import ProductForm
+from .forms import ProductForm, ProductUpdateForm
 from .models import Product
 # Create your views here.
 
@@ -30,15 +30,14 @@ def product_list_view(request):
 
 def product_detail_view(request, product_slug=None):
     product = get_object_or_404(Product, product_slug=product_slug)
-
+    
     is_owner = False
     if request.user.is_authenticated:
         is_owner = product.user == request.user
-
-    # here we will write more code.
         if is_owner:
-            form = ProductForm(request.POST or None, instance=product)
-
+            form = ProductUpdateForm(
+                request.POST or None, request.FILES or None, instance=product)
+            
             if form.is_valid():
 
                 form.save()
