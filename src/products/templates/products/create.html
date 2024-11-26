@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <form method="POST" class="px-4 py-2">
+    {% csrf_token %}
+
+    {% if form.errors %}
+      <div class="mb-3">
+        {% for errors in form.field.errors %}
+          <p class="bg-red-500 text-white rounded-lg px-4 py-2 font-semibold">{{ errors }}</p>
+        {% endfor %}
+
+        {% for error in form.non_field_errors %}
+        <p class="bg-red-500 text-white rounded-lg px-4 py-2 font-semibold">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% for field in form %}
+      <label for="{{ field.auto_id }}" class="inline-block text-lg md:text-xl font-semibold mb-2">{{ field.label }}</label>
+      {{ field }}
+    {% endfor %}
+    <button class="btn-submit">Submit</button>
+  </form>
+{% endblock %}
