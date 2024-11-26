@@ -4,5 +4,49 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"todo-tree.highlights.defaultHighlight": {
+			"background": "#FF0000",
+			"foreground": "#FFF",
+			
+		},
+		"todo-tree.highlights.highlightDelay": 200,
+		"todo-tree.highlights.foregroundColourScheme": [
+			"yellow",
+			"red",
+			"red"
+		],
+		"todo-tree.highlights.useColourScheme": false,
+		"todo-tree.highlights.customHighlight": {
+			
+			"BUG": {
+				"icon": "bug"
+			},
+			"HACK": {
+				"icon": "tools"
+			},
+			"FIXME": {
+				"icon": "flame"
+			},
+			"XXX": {
+				"icon": "x"
+			},
+			"[ ]": {
+				"icon": "issue-draft"
+			},
+			"[x]": {
+				"icon": "issue-closed"
+			}
+		},
+		"todo-tree.general.tags": [
+			"BUG",
+			"HACK",
+			"FIXME",
+			"TODO",
+			"XXX",
+			"[ ]",
+			"[x]",
+			"STRD"
+		]
+	}
 }
