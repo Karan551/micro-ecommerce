@@ -47,15 +47,18 @@ class Product(models.Model):
 
 
 def handle_product_attachment_upload(instance, filename):
-    return f"/products/{instance.product.product_slug}/attachments/{filename}"
-    
+    return f"products/{instance.product.product_slug}/attachments/{filename}"
 
 
 class ProductAttachMent(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    # STRD 
-    file = models.FileField(upload_to=handle_product_attachment_upload, storage=protected_storage)
+    # STRD
+    file = models.FileField(upload_to=handle_product_attachment_upload,
+                            storage=protected_storage)
     is_free = models.BooleanField(default=False)
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.product.product_name

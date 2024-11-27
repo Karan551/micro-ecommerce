@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse, HttpResponseBadRequest
 from .forms import ProductForm, ProductUpdateForm
-from .models import Product
+from .models import Product, ProductAttachMent
+import mimetypes
 # Create your views here.
 
 
@@ -30,14 +31,14 @@ def product_list_view(request):
 
 def product_detail_view(request, product_slug=None):
     product = get_object_or_404(Product, product_slug=product_slug)
-    
+
     is_owner = False
     if request.user.is_authenticated:
         is_owner = product.user == request.user
         if is_owner:
             form = ProductUpdateForm(
                 request.POST or None, request.FILES or None, instance=product)
-            
+
             if form.is_valid():
 
                 form.save()
@@ -45,3 +46,31 @@ def product_detail_view(request, product_slug=None):
             return render(request, "products/product_detail.html", {"product": product, "form": form})
 
     return render(request, "products/product_detail.html", {"product": product})
+
+
+def product_attachment_download_view(request, product_slug=None, pk=None):
+    # if image is free then it is visible to all user
+    # if user is authenticated then download image free not free don't care
+
+    # HERE we use field lookup
+    attachment = get_object_or_404(
+        ProductAttachMent, pk=pk, product__product_slug=product_slug)
+
+    can_download = attachment.is_free or False
+    if request.user.is_authenticated:
+        can_download = True
+
+    if not can_download:
+        return HttpResponseBadRequest()
+    
+    file = attachment.file.open("rb")
+    filename = attachment.file.name
+
+    content_type, _ = mimetypes.guess_type(filename)
+    response = FileResponse(file)
+    response["Content-Type"] = content_type or "application/octet-stream"
+    
+    # if we want to download the image then
+    # HERE we will change the value of inline -> attachment , to download the image
+    response["Content-Disposition"] = f"inline;filename={filename}"
+    return response
