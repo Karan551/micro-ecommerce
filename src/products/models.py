@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils import timezone
 from django.core.files.storage import FileSystemStorage
+from django.urls import reverse
+import pathlib
 # Create your models here.
 
 PROTECTED_MEDIA_ROOT = settings.PROTECTED_MEDIA_ROOT
@@ -10,22 +12,33 @@ protected_storage = FileSystemStorage(location=str(PROTECTED_MEDIA_ROOT))
 
 
 class Product(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE, default=1)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        default=1)
 
     product_name = models.CharField(max_length=255)
     product_price = models.DecimalField(
-        max_digits=10, decimal_places=2, default=9.99)
+        max_digits=10,
+        decimal_places=2,
+        default=9.99)
 
     product_image = models.ImageField(
-        upload_to="products/", blank=True, null=True)
+        upload_to="products/",
+        blank=True,
+        null=True)
     og_price = models.DecimalField(
-        max_digits=10, decimal_places=2, default=9.99)
+        max_digits=10,
+        decimal_places=2,
+        default=9.99)
 
     stripe_price = models.IntegerField(default=999)
     product_slug = models.SlugField(unique=True)
     price_changed_timestamp = models.DateTimeField(
-        auto_now=False, auto_now_add=False, blank=True, null=True)
+        auto_now=False,
+        auto_now_add=False,
+        blank=True,
+        null=True)
 
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -43,7 +56,8 @@ class Product(models.Model):
         return self.product_name
 
     def get_absolute_url(self):
-        return f"/products/{self.product_slug}"
+        # return f"/products/{self.product_slug}"
+        return reverse("products:product_detail", kwargs={"product_slug": self.product_slug})
 
 
 def handle_product_attachment_upload(instance, filename):
@@ -53,8 +67,13 @@ def handle_product_attachment_upload(instance, filename):
 class ProductAttachMent(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     # STRD
-    file = models.FileField(upload_to=handle_product_attachment_upload,
-                            storage=protected_storage)
+    file = models.FileField(
+        upload_to=handle_product_attachment_upload,
+        storage=protected_storage)
+    name = models.CharField(
+        null=True,
+        blank=True,
+        max_length=250)
     is_free = models.BooleanField(default=False)
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -62,3 +81,18 @@ class ProductAttachMent(models.Model):
 
     def __str__(self):
         return self.product.product_name
+
+    def save(self, *args, **kwargs):
+        if not self.name:
+            self.name = pathlib.Path(self.file.name).name
+
+        super().save(*args, **kwargs)
+
+    def get_download_url(self):
+        return reverse("products:attachment_download", kwargs={"pk": self.pk, "product_slug": self.product.product_slug})
+
+    @property
+    def display_name(self):
+        # self.file.name -> access the name of the file stored in the field.
+
+        return pathlib.Path(self.file.name).name
