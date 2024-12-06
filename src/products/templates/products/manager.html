@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <p>this is manager webpage.</p>
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div>{{ form.as_p }}</div>
+    <br />
+
+    {{ formset.management_form }}   <!-- This is the management form -->
+    <div class="space-y-4 border-b pb-3">
+      <div>
+        {% for form in formset %}
+          <div>{{ form.as_p }}</div>
+        {% endfor %}
+      </div>
+    </div>
+    <button type="submit" class="btn-submit">Submit</button>
+  </form>
+{% endblock %}

@@ -1,5 +1,5 @@
-from django.forms import ModelForm
-from .models import Product
+from django.forms import ModelForm, modelformset_factory, inlineformset_factory
+from .models import Product, ProductAttachMent
 from django import forms
 
 
@@ -33,7 +33,7 @@ class ProductForm(ModelForm):
         }
 
 
-class ProductUpdateForm(forms.ModelForm):
+class ProductUpdateForm(ModelForm):
     class Meta:
         model = Product
         fields = ["product_name", "product_price",
@@ -44,3 +44,50 @@ class ProductUpdateForm(forms.ModelForm):
 
         for field in self.fields:
             self.fields[field].widget.attrs["class"] = "form-control"
+
+
+class ProductAttachMentForm(ModelForm):
+    class Meta:
+        model = ProductAttachMent
+        fields = ["file", "name", "is_free", "active"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field in self.fields:
+
+            if field in ["is_free", "active"]:
+                continue
+            self.fields[field].widget.attrs["class"] = "form-control"
+
+
+# we can do withour fields attribute because it is modelForm
+ProductAttachMentModelFormSet = modelformset_factory(
+    ProductAttachMent,
+    form=ProductAttachMentForm,
+    fields=["file", "name", "is_free", "active"],
+    extra=0,
+    can_delete=False,
+
+)
+
+# ProductAttachMentInlineFormSet = inlineformset_factory(
+#     Product,
+#     ProductAttachMent,
+#     ProductAttachMentForm,
+#     formset=ProductAttachMentModelFormSet,
+#     fields=["file", "name", "is_free", "active"],
+#     can_delete=False,
+#     extra=0
+# )
+
+
+ProductAttachmentInlineFormSet = inlineformset_factory(
+    Product,
+    ProductAttachMent,
+    form = ProductAttachMentForm,
+    formset = ProductAttachMentModelFormSet,
+    fields = ['file', 'name','is_free', 'active'],
+    extra=0,
+    can_delete=False
+)

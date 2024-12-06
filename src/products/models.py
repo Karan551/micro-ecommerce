@@ -59,6 +59,9 @@ class Product(models.Model):
         # return f"/products/{self.product_slug}"
         return reverse("products:product_detail", kwargs={"product_slug": self.product_slug})
 
+    def get_manage_url(self):
+        return reverse("products:manage", kwargs={"product_slug": self.product_slug})
+
 
 def handle_product_attachment_upload(instance, filename):
     return f"products/{instance.product.product_slug}/attachments/{filename}"

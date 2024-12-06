@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, FileResponse, HttpResponseBadRequest
-from .forms import ProductForm, ProductUpdateForm
+from .forms import ProductForm, ProductUpdateForm, ProductAttachmentInlineFormSet, ProductAttachMentModelFormSet
 from .models import Product, ProductAttachMent
 import mimetypes
 
@@ -56,22 +56,50 @@ def product_manage_detail_view(request, product_slug=None):
     # HERE  observe this view again
     product = get_object_or_404(Product, product_slug=product_slug)
 
+    context = {"product": product}
+    attachments = ProductAttachMent.objects.filter(product=product)
     is_manager = False
 
     if request.user.is_authenticated:
         is_manager = product.user == request.user
 
-    if is_manager:
-        form = ProductUpdateForm(
-            request.POST or None,
-            request.FILES or None,
-            instance=product)
-        if form.is_valid():
-            form.save()
+    if not is_manager:
+        return HttpResponseBadRequest()
 
-        return render(request, "products/product_detail.html", {"product": product, "form": form})
+    form = ProductUpdateForm(
+        request.POST or None,
+        request.FILES or None,
+        instance=product)
 
-    return render(request, "products/product_detail.html", {"product": product})
+    formset = ProductAttachmentInlineFormSet(
+        request.POST or None,
+        request.FILES or None,
+        queryset=attachments
+
+    )
+    print("form data ", request.POST)
+    print("form files ", request.FILES)
+    print("form is valid or not ", form.is_valid())
+    print("form is valid or not ", form.errors)
+    print("formset has errors ", formset.errors, "----", formset.is_valid())
+
+    # HERE I have to work
+    if form.is_valid() and formset.is_valid():
+        form.save()
+        formset.save(commit=False)
+        print("%%%% form is vaid or not-------")
+
+        for _form in formset:
+            attachment_obj = _form.save(commit=False)
+            attachment_obj.product = product
+            attachment_obj.save()
+
+        return redirect(product.get_manage_url())
+
+    context["form"] = form
+    context["formset"] = formset
+
+    return render(request, "products/manager.html", context)
 
 
 def product_attachment_download_view(request, product_slug=None, pk=None):
