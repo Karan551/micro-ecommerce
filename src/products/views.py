@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, FileResponse, HttpResponseBadRequest
-from .forms import ProductForm, ProductUpdateForm, ProductAttachmentInlineFormSet, ProductAttachMentModelFormSet
+from .forms import ProductForm, ProductUpdateForm, ProductAttachmentInlineFormSet
 from .models import Product, ProductAttachMent
 import mimetypes
 
@@ -77,17 +77,11 @@ def product_manage_detail_view(request, product_slug=None):
         queryset=attachments
 
     )
-    print("form data ", request.POST)
-    print("form files ", request.FILES)
-    print("form is valid or not ", form.is_valid())
-    print("form is valid or not ", form.errors)
-    print("formset has errors ", formset.errors, "----", formset.is_valid())
-
-    # HERE I have to work
+       
     if form.is_valid() and formset.is_valid():
         form.save()
         formset.save(commit=False)
-        print("%%%% form is vaid or not-------")
+     
 
         for _form in formset:
             attachment_obj = _form.save(commit=False)
