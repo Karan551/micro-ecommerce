@@ -77,16 +77,30 @@ def product_manage_detail_view(request, product_slug=None):
         queryset=attachments
 
     )
-       
+
     if form.is_valid() and formset.is_valid():
         form.save()
         formset.save(commit=False)
-     
 
+        print("this is form set value::", formset)
         for _form in formset:
-            attachment_obj = _form.save(commit=False)
-            attachment_obj.product = product
-            attachment_obj.save()
+            print("cleaned data", _form.cleaned_data)
+            is_delete = _form.cleaned_data.get("DELETE")
+
+            try:
+                attachment_obj = _form.save(commit=False)
+
+            except:
+                attachment_obj = None
+
+            if is_delete:
+                if attachment_obj is not None:
+                    if attachment_obj.pk:
+                        attachment_obj.delete()
+            else:
+                if attachment_obj is not None:
+                    attachment_obj.product = product
+                    attachment_obj.save()
 
         return redirect(product.get_manage_url())
 

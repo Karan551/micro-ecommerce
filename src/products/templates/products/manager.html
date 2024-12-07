@@ -1,21 +1,30 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <p>this is manager webpage.</p>
+
   <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 
     <div>{{ form.as_p }}</div>
     <br />
 
-    {{ formset.management_form }}   <!-- This is the management form -->
+    {{ formset.management_form }} <!-- This is the management form -->
     <div class="space-y-4 border-b pb-3">
-      <div>
+      <div class="pb-3  space-y-3" id="attachments">
         {% for form in formset %}
           <div>{{ form.as_p }}</div>
         {% endfor %}
       </div>
+
     </div>
-    <button type="submit" class="btn-submit">Submit</button>
+    <button type="submit" class="btn-submit my-2">Submit</button>
+    <button type="button" id="attachment-btn" class="btn-submit mx-2 my-2 shadow-lg active:shadow-2xl border-none" id="attachment-btn">Add Attachments</button>
   </form>
+
+  <div class="hidden" id="blank-form">{{ formset.empty_form }}</div>
+{% endblock %}
+
+{% block javascript %}
+  {% load static %}
+  <script src="{% static 'js/add_form.js' %}"></script>
 {% endblock %}

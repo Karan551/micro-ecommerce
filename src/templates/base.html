@@ -28,8 +28,11 @@
     <script>
       tailwind.config = {
         darkMode: 'class',
-        content: ["./src/**/*.{html,js}", "./src/**/forms.py"],
+        content: ['./src/**/*.{html,js}', './src/**/forms.py']
       }
     </script>
+    {% block javascript %}
+    
+    {% endblock %}
   </body>
 </html>
