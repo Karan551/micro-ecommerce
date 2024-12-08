@@ -82,9 +82,9 @@ def product_manage_detail_view(request, product_slug=None):
         form.save()
         formset.save(commit=False)
 
-        print("this is form set value::", formset)
+        # print("this is form set value::", formset)
         for _form in formset:
-            print("cleaned data", _form.cleaned_data)
+            
             is_delete = _form.cleaned_data.get("DELETE")
 
             try:
