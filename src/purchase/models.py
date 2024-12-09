@@ -11,5 +11,5 @@ class Purchase(models.Model):
                              on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     completed = models.BooleanField(default=False)
-    product_price = models.IntegerField()
+    product_price = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
