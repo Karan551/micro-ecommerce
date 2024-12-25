@@ -149,3 +149,6 @@ PROTECTED_MEDIA_ROOT = BASE_DIR.parent/"local-cdn"/"protected"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+STRIPE_KEY = config["DJANGO_STRIPE_KEY"]
